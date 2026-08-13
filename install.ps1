@@ -1,4 +1,4 @@
-# mdv Installer for PowerShell
+# mdv-powershell-markdown-previewer Installer
 # Supports PowerShell 7+ (pwsh) and Windows PowerShell 5.1
 
 $ErrorActionPreference = "Stop"
@@ -12,7 +12,8 @@ $profiles = @(
 
 $mdvFunction = @'
 # =====================================================================
-# mdv — Fast, Zero-Limit GitHub Dark Mode Markdown Previewer
+# mdv-powershell-markdown-previewer
+# Fast, Zero-Limit GitHub Dark Mode Markdown Previewer
 # =====================================================================
 function mdv {
     param(
@@ -152,13 +153,13 @@ foreach ($p in $profiles) {
 
     if ($existing -notlike "*function mdv*") {
         Add-Content -Path $p -Value "`n$mdvFunction`n" -Force
-        Write-Host "[+] Installed mdv to: $p" -ForegroundColor Green
+        Write-Host "Installed mdv to: $p" -ForegroundColor Green
     } else {
         Set-Content -Path $p -Value $mdvFunction -Force
-        Write-Host "[*] Updated mdv in: $p" -ForegroundColor Cyan
+        Write-Host "Updated mdv in: $p" -ForegroundColor Cyan
     }
     $installedCount++
 }
 
-Write-Host "`n[SUCCESS] mdv installed into $installedCount PowerShell profiles!" -ForegroundColor Green
-Write-Host "Restart your terminal or run '. `$PROFILE' to start using 'mdv'!" -ForegroundColor Yellow
+Write-Host "`nSUCCESS: mdv installed into $installedCount PowerShell profiles." -ForegroundColor Green
+Write-Host "Restart your terminal or run '. `$PROFILE' to start using mdv." -ForegroundColor Yellow

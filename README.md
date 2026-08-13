@@ -1,4 +1,4 @@
-# mdv — Markdown Viewer for PowerShell
+# mdv-powershell-markdown-previewer
 
 <div align="center">
 
@@ -8,77 +8,76 @@
 ![Dark Mode](https://img.shields.io/badge/theme-GitHub%20Dark-0d1117)
 ![LaTeX](https://img.shields.io/badge/math-KaTeX-green)
 
-**Lightning-fast, Zero-Limit GitHub Dark Mode Markdown Previewer for PowerShell.**
+**Fast, Zero-Limit GitHub Dark Mode Markdown Previewer for PowerShell.**
 
-*Never hit `fork/exec: filename or extension is too long` or 32KB process limits again.*
+*Eliminates process argument overflow, binary path limits, and 32KB buffer caps.*
 
 </div>
 
 ---
 
-## 🔥 Why `mdv`?
+## Overview
 
-Standard markdown CLI previewers like `gh markdown-preview` break on Windows when rendering large Markdown files (>32 KB) due to the Windows 32,767 character process argument limit (`CreateProcess`). They also lack native image resolution and KaTeX LaTeX math support.
+`mdv-powershell-markdown-previewer` (`mdv`) provides high-performance, dark-mode Markdown rendering directly from the PowerShell command line. Standard CLI preview extensions (such as `gh markdown-preview`) rely on passing raw document strings directly via command-line flags. On Windows, this frequently triggers process creation errors (`fork/exec: filename or extension is too long`) whenever document payload size exceeds the 32,767-character `CreateProcess` argument buffer.
 
-`mdv` solves this completely:
-- 🚀 **Zero File-Size Limit:** Renders 1 KB or 10 MB+ files instantly without command-line process errors.
-- 🌙 **100% GitHub Dark Theme:** Matches official GitHub dark styling (`#0d1117`).
-- 📐 **Full LaTeX Math Support:** Instant rendering of inline (`$ ... $`, `\( ... \)`) and block (`$$ ... $$`, `\[ ... \]`) equations via KaTeX.
-- 🖼️ **Local Image & HTML Support:** Resolves relative image paths (`src="assets/..."`) and parses HTML tags natively (`<div align="center">`, badges, `<br />`).
-- ⚡ **Multi-Tab Preview (`mdv -all`):** Open every Markdown file in your current folder simultaneously in browser tabs with a single command.
+This module resolves process buffer caps and adds full support for embedded KaTeX LaTeX formulas, local image resolution, and simultaneous multi-document browser previewing.
 
 ---
 
-## ⚡ Quick 1-Click Installation
+## Key Capabilities
 
-### Option A: Double-Click Installer (Batch File)
-1. Download or clone this repository.
+- **Zero-Limit Document Payload Sizing:** Renders large engineering specifications and documentation files without encountering Windows command-line process limits.
+- **GitHub Dark Mode Styling:** Renders documents using official GitHub Dark Theme CSS (`#0d1117`).
+- **KaTeX LaTeX Math Rendering:** Parses inline (`$ ... $`, `\( ... \)`) and block (`$$ ... $$`, `\[ ... \]`) mathematical expressions natively.
+- **Local Path Resolution:** Resolves relative image sources (`src="assets/..."`) and renders inline HTML elements (`<div align="center">`, badges, `<br />`).
+- **Multi-Document Previews (`mdv -all`):** Opens all Markdown files in the active directory simultaneously in individual browser tabs.
+
+---
+
+## Installation
+
+### Method A: Single-Click Batch Installer
+1. Clone or download this repository.
 2. Double-click `install.bat`.
-3. Open a new PowerShell terminal!
+3. Open a new PowerShell terminal.
 
-### Option B: One-Liner PowerShell Install
-Run this command in PowerShell:
+### Method B: PowerShell Web Installer
+Execute the following command in PowerShell:
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/IamOumarIbrahim/mdv/main/install.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/IamOumarIbrahim/mdv-powershell-markdown-previewer/main/install.ps1 | iex
 ```
-
-*Or manually copy-paste `install.ps1` into PowerShell.*
 
 ---
 
-## 🚀 Usage
+## Usage
 
-### Preview a specific file
+### Preview a Single Document
 ```powershell
 mdv README.md
 ```
-*or*
-```powershell
-mdv .\assets\Docs\MANAR_V1_ENGINEERING_RESEARCH_V3.md
-```
 
-### Preview ALL Markdown files in the current folder
+### Preview All Documents in Current Directory
 ```powershell
 mdv -all
 ```
-*(or `mdv -a` or simply `mdv`)*
+*(or `mdv -a` or `mdv`)*
 
 ---
 
-## 📊 Comparison
+## Technical Comparison
 
-| Feature | `gh markdown-preview` | `mdv` |
+| Feature | `gh markdown-preview` | `mdv-powershell-markdown-previewer` |
 | :--- | :---: | :---: |
-| **Large File Support (>32 KB)** | ❌ Crashes (`filename too long`) | ✅ **Zero limit (10MB+)** |
-| **LaTeX Math Equations** | ❌ Raw text | ✅ **KaTeX Rendered** |
-| **Local Image Resolution** | ❌ Broken relative paths | ✅ **Full `<base href>` pathing** |
-| **Inline HTML / Badges** | ❌ Escaped raw text | ✅ **Native HTML parsing** |
-| **Multi-file / Multi-tab (`-all`)** | ❌ Broken / `path=` empty | ✅ **Instant multi-tab preview** |
-| **Dark Mode** | ⚠️ Flag required | ✅ **Default GitHub Dark (`#0d1117`)** |
+| **Large File Support (>32 KB)** | Failed (`filename too long`) | **Zero Limit (Unlimited)** |
+| **LaTeX Math Rendering** | Unrendered Raw Text | **KaTeX Rendered** |
+| **Local Image Resolution** | Broken Relative Paths | **Full Base URI Resolution** |
+| **Inline HTML / Badges** | Escaped Text | **Native HTML Parsing** |
+| **Multi-File Batch Preview** | Unsupported / Empty `path=` | **Instant Multi-Tab Preview** |
+| **Default Theme** | Light (Flag Required) | **GitHub Dark (`#0d1117`)** |
 
 ---
 
-## 📜 License
+## License
 
 Distributed under the [MIT License](LICENSE). Created and maintained by [Oumar Ibrahim](https://github.com/IamOumarIbrahim).
