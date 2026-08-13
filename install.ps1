@@ -158,11 +158,6 @@ function mdv {
 <body>
     <article class="markdown-body" id="content"></article>
     <script>
-        const b64 = "$base64";
-        const binaryStr = atob(b64);
-        const bytes = Uint8Array.from(binaryStr, c => c.charCodeAt(0));
-        const rawText = new TextDecoder("utf-8").decode(bytes);
-
         function escapeHtml(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
@@ -175,7 +170,7 @@ function mdv {
                 return `<input type="checkbox" disabled ${val ? 'checked' : ''} style="margin:0; cursor:default;" />`;
             }
             if (Array.isArray(val)) {
-                const kLower = key.toLowerCase();
+                const kLower = String(key).toLowerCase();
                 const isTag = kLower === 'tags' || kLower === 'manar_relevance';
                 const isAuthor = kLower === 'authors';
                 let pillClass = 'prop-pill';
@@ -184,46 +179,63 @@ function mdv {
 
                 return val.map(v => `<span class="${pillClass}">${escapeHtml(v)}</span>`).join('');
             }
-            if (typeof val === 'string' && (val.startsWith('http://') || val.startsWith('https://'))) {
-                return `<a href="${escapeHtml(val)}" target="_blank" class="prop-link">${escapeHtml(val)}</a>`;
+            const valStr = String(val);
+            if (valStr.startsWith('http://') || valStr.startsWith('https://')) {
+                return `<a href="${escapeHtml(valStr)}" target="_blank" class="prop-link">${escapeHtml(valStr)}</a>`;
             }
             if (typeof val === 'object') {
                 return `<pre style="margin:0; font-size:0.8rem; background:transparent; border:none;">${escapeHtml(JSON.stringify(val, null, 2))}</pre>`;
             }
-            return escapeHtml(val);
+            return escapeHtml(valStr);
         }
 
-        let bodyText = rawText;
-        let propsHtml = '';
+        try {
+            const b64 = "$base64";
+            const binaryStr = atob(b64);
+            const bytes = Uint8Array.from(binaryStr, c => c.charCodeAt(0));
+            const rawText = new TextDecoder("utf-8").decode(bytes);
 
-        const fmMatch = rawText.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
-        if (fmMatch) {
-            try {
-                const parsed = jsyaml.load(fmMatch[1]);
-                if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-                    propsHtml = '<div class="obsidian-properties"><div class="properties-header"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> Properties</div><div class="properties-table">';
-                    for (const [k, v] of Object.entries(parsed)) {
-                        propsHtml += `<div class="prop-row"><div class="prop-key">${escapeHtml(k)}</div><div class="prop-val">${formatPropValue(k, v)}</div></div>`;
+            let bodyText = rawText;
+            let propsHtml = '';
+
+            const fmMatch = rawText.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+            if (fmMatch) {
+                try {
+                    if (typeof jsyaml !== 'undefined') {
+                        const parsed = jsyaml.load(fmMatch[1]);
+                        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                            propsHtml = '<div class="obsidian-properties"><div class="properties-header"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> Properties</div><div class="properties-table">';
+                            for (const [k, v] of Object.entries(parsed)) {
+                                propsHtml += `<div class="prop-row"><div class="prop-key">${escapeHtml(k)}</div><div class="prop-val">${formatPropValue(k, v)}</div></div>`;
+                            }
+                            propsHtml += '</div></div>';
+                            bodyText = rawText.substring(fmMatch[0].length);
+                        }
                     }
-                    propsHtml += '</div></div>';
-                    bodyText = rawText.substring(fmMatch[0].length);
+                } catch (e) {
+                    console.error("YAML Parse Error:", e);
                 }
-            } catch (e) {
-                console.error("YAML Parse Error:", e);
             }
-        }
 
-        const contentEl = document.getElementById('content');
-        contentEl.innerHTML = propsHtml + marked.parse(bodyText);
-        renderMathInElement(contentEl, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false
-        });
+            const contentEl = document.getElementById('content');
+            const parsedMarkdown = (typeof marked !== 'undefined') ? marked.parse(bodyText) : escapeHtml(bodyText);
+            contentEl.innerHTML = propsHtml + parsedMarkdown;
+
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(contentEl, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        } catch (err) {
+            console.error("Render Error:", err);
+            document.getElementById('content').innerHTML = '<div style="color:#f85149; padding:20px;">Render Error: ' + escapeHtml(err.message) + '</div>';
+        }
     </script>
 </body>
 </html>

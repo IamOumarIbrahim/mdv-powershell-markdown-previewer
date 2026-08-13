@@ -29,7 +29,7 @@ This module resolves process buffer caps and adds full support for Obsidian-styl
 ## Key Capabilities
 
 - **Zero-Limit Document Payload Sizing:** Renders large engineering specifications and documentation files without encountering Windows command-line process limits.
-- **Obsidian-Style YAML Properties Cards:** Automatically parses YAML frontmatter (`---` ... `---`) into clean Obsidian Properties UI cards with pill badges for tags/aliases/authors, checkboxes for booleans, clickable links for URLs/DOIs, and structured key-value alignment.
+- **Obsidian-Style YAML Properties Cards:** Automatically extracts YAML frontmatter (`---` ... `---`) into clean Obsidian Properties UI cards with pill badges for tags/aliases/authors, checkboxes for booleans, clickable links for URLs/DOIs, and structured key-value alignment.
 - **GitHub Dark Mode Styling:** Renders documents using official GitHub Dark Theme CSS (`#0d1117`).
 - **KaTeX LaTeX Math Rendering:** Parses inline (`$ ... $`, `\( ... \)`) and block (`$$ ... $$`, `\[ ... \]`) mathematical expressions natively.
 - **Local Path Resolution:** Resolves relative image sources (`src="assets/..."`) and renders inline HTML elements (`<div align="center">`, badges, `<br />`).
