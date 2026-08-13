@@ -3,13 +3,14 @@
 <div align="center">
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-0078D6)
 ![Dark Mode](https://img.shields.io/badge/theme-GitHub%20Dark-0d1117)
+![Obsidian](https://img.shields.io/badge/Obsidian-Properties-purple)
 ![LaTeX](https://img.shields.io/badge/math-KaTeX-green)
 
-**Fast, Zero-Limit GitHub Dark Mode Markdown Previewer for PowerShell.**
+**Fast, Zero-Limit GitHub Dark Mode & Obsidian Properties Markdown Previewer for PowerShell.**
 
 *Eliminates process argument overflow, binary path limits, and 32KB buffer caps.*
 
@@ -21,13 +22,14 @@
 
 `mdv-powershell-markdown-previewer` (`mdv`) provides high-performance, dark-mode Markdown rendering directly from the PowerShell command line. Standard CLI preview extensions (such as `gh markdown-preview`) rely on passing raw document strings directly via command-line flags. On Windows, this frequently triggers process creation errors (`fork/exec: filename or extension is too long`) whenever document payload size exceeds the 32,767-character `CreateProcess` argument buffer.
 
-This module resolves process buffer caps and adds full support for embedded KaTeX LaTeX formulas, local image resolution, and simultaneous multi-document browser previewing (including recursive subfolder scanning).
+This module resolves process buffer caps and adds full support for Obsidian-style YAML Properties cards, embedded KaTeX LaTeX formulas, local image resolution, and simultaneous multi-document browser previewing (including recursive subfolder scanning).
 
 ---
 
 ## Key Capabilities
 
 - **Zero-Limit Document Payload Sizing:** Renders large engineering specifications and documentation files without encountering Windows command-line process limits.
+- **Obsidian-Style YAML Properties Cards:** Automatically parses YAML frontmatter (`---` ... `---`) into clean Obsidian Properties UI cards with pill badges for tags/aliases/authors, checkboxes for booleans, clickable links for URLs/DOIs, and structured key-value alignment.
 - **GitHub Dark Mode Styling:** Renders documents using official GitHub Dark Theme CSS (`#0d1117`).
 - **KaTeX LaTeX Math Rendering:** Parses inline (`$ ... $`, `\( ... \)`) and block (`$$ ... $$`, `\[ ... \]`) mathematical expressions natively.
 - **Local Path Resolution:** Resolves relative image sources (`src="assets/..."`) and renders inline HTML elements (`<div align="center">`, badges, `<br />`).
@@ -78,6 +80,7 @@ mdv -allf
 | Feature | `gh markdown-preview` | `mdv-powershell-markdown-previewer` |
 | :--- | :---: | :---: |
 | **Large File Support (>32 KB)** | Failed (`filename too long`) | **Zero Limit (Unlimited)** |
+| **Obsidian YAML Properties UI** | Unrendered Raw Text Block | **Structured Properties Cards & Badges** |
 | **LaTeX Math Rendering** | Unrendered Raw Text | **KaTeX Rendered** |
 | **Local Image Resolution** | Broken Relative Paths | **Full Base URI Resolution** |
 | **Inline HTML / Badges** | Escaped Text | **Native HTML Parsing** |
