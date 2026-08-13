@@ -1,4 +1,4 @@
-# mdv-powershell-markdown-previewer Installer
+# mdv-powershell-markdown-previewer Installer (v1.1.0)
 # Supports PowerShell 7+ (pwsh) and Windows PowerShell 5.1
 
 $ErrorActionPreference = "Stop"
@@ -12,13 +12,16 @@ $profiles = @(
 
 $mdvFunction = @'
 # =====================================================================
-# mdv-powershell-markdown-previewer
+# mdv-powershell-markdown-previewer (v1.1.0)
 # Fast, Zero-Limit GitHub Dark Mode Markdown Previewer
 # =====================================================================
 function mdv {
     param(
         [Alias("a")]
         [switch]$All,
+
+        [Alias("af")]
+        [switch]$AllFolders,
 
         [Parameter(ValueFromRemainingArguments=$true)]
         [string[]]$Targets
@@ -102,13 +105,28 @@ function mdv {
 "@
 
         $cleanName = [RegEx]::Replace($fileItem.Name, '[^a-zA-Z0-9_-]', '_')
-        $outPath = Join-Path $env:TEMP "mdv_$cleanName.html"
+        $hash = [Math]::Abs($fileItem.FullName.GetHashCode())
+        $outPath = Join-Path $env:TEMP "mdv_${cleanName}_$hash.html"
         Set-Content -Path $outPath -Value $template -Encoding UTF8
         Start-Process $outPath
     }
 
-    if ($All -or ($Targets -and ($Targets[0] -eq '-all' -or $Targets[0] -eq '-a'))) {
-        $files = Get-ChildItem -Path . -Filter *.md
+    $isAllFolders = $AllFolders -or ($Targets -and ($Targets[0] -eq '-allf' -or $Targets[0] -eq '-af'))
+    $isAllCurrent = $All -or ($Targets -and ($Targets[0] -eq '-all' -or $Targets[0] -eq '-a'))
+
+    if ($isAllFolders) {
+        $files = Get-ChildItem -Path . -Filter *.md -Recurse -File
+        if (-not $files) {
+            Write-Warning "No .md files found in current directory or subdirectories."
+            return
+        }
+        foreach ($f in $files) {
+            Format-MdPreview $f
+            Start-Sleep -Milliseconds 150
+        }
+    }
+    elseif ($isAllCurrent) {
+        $files = Get-ChildItem -Path . -Filter *.md -File
         if (-not $files) {
             Write-Warning "No .md files found in current directory."
             return
@@ -119,7 +137,7 @@ function mdv {
         }
     }
     elseif (-not $Targets) {
-        $files = Get-ChildItem -Path . -Filter *.md
+        $files = Get-ChildItem -Path . -Filter *.md -File
         if ($files) {
             Format-MdPreview $files[0]
         } else {
@@ -161,5 +179,5 @@ foreach ($p in $profiles) {
     $installedCount++
 }
 
-Write-Host "`nSUCCESS: mdv installed into $installedCount PowerShell profiles." -ForegroundColor Green
+Write-Host "`nSUCCESS: mdv (v1.1.0) installed into $installedCount PowerShell profiles." -ForegroundColor Green
 Write-Host "Restart your terminal or run '. `$PROFILE' to start using mdv." -ForegroundColor Yellow

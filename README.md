@@ -3,6 +3,7 @@
 <div align="center">
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-0078D6)
 ![Dark Mode](https://img.shields.io/badge/theme-GitHub%20Dark-0d1117)
@@ -20,7 +21,7 @@
 
 `mdv-powershell-markdown-previewer` (`mdv`) provides high-performance, dark-mode Markdown rendering directly from the PowerShell command line. Standard CLI preview extensions (such as `gh markdown-preview`) rely on passing raw document strings directly via command-line flags. On Windows, this frequently triggers process creation errors (`fork/exec: filename or extension is too long`) whenever document payload size exceeds the 32,767-character `CreateProcess` argument buffer.
 
-This module resolves process buffer caps and adds full support for embedded KaTeX LaTeX formulas, local image resolution, and simultaneous multi-document browser previewing.
+This module resolves process buffer caps and adds full support for embedded KaTeX LaTeX formulas, local image resolution, and simultaneous multi-document browser previewing (including recursive subfolder scanning).
 
 ---
 
@@ -30,7 +31,8 @@ This module resolves process buffer caps and adds full support for embedded KaTe
 - **GitHub Dark Mode Styling:** Renders documents using official GitHub Dark Theme CSS (`#0d1117`).
 - **KaTeX LaTeX Math Rendering:** Parses inline (`$ ... $`, `\( ... \)`) and block (`$$ ... $$`, `\[ ... \]`) mathematical expressions natively.
 - **Local Path Resolution:** Resolves relative image sources (`src="assets/..."`) and renders inline HTML elements (`<div align="center">`, badges, `<br />`).
-- **Multi-Document Previews (`mdv -all`):** Opens all Markdown files in the active directory simultaneously in individual browser tabs.
+- **Multi-Document Current Directory Preview (`mdv -all`):** Opens all Markdown files in the active directory simultaneously in individual browser tabs.
+- **Recursive Subdirectory Preview (`mdv -allf`):** Recursively finds and opens all Markdown files across the current folder and all subdirectories (`-allf` / `-af`).
 
 ---
 
@@ -57,11 +59,17 @@ iwr -useb https://raw.githubusercontent.com/IamOumarIbrahim/mdv-powershell-markd
 mdv README.md
 ```
 
-### Preview All Documents in Current Directory
+### Preview All Documents in Current Directory Only
 ```powershell
 mdv -all
 ```
 *(or `mdv -a` or `mdv`)*
+
+### Preview All Documents in Current Directory AND All Subdirectories
+```powershell
+mdv -allf
+```
+*(or `mdv -af`)*
 
 ---
 
@@ -73,7 +81,8 @@ mdv -all
 | **LaTeX Math Rendering** | Unrendered Raw Text | **KaTeX Rendered** |
 | **Local Image Resolution** | Broken Relative Paths | **Full Base URI Resolution** |
 | **Inline HTML / Badges** | Escaped Text | **Native HTML Parsing** |
-| **Multi-File Batch Preview** | Unsupported / Empty `path=` | **Instant Multi-Tab Preview** |
+| **Current Directory Preview (`-all`)** | Unsupported / Empty `path=` | **Instant Multi-Tab Preview** |
+| **Recursive Subdirectory Preview (`-allf`)** | Unsupported | **Full Recursive Scan & Render** |
 | **Default Theme** | Light (Flag Required) | **GitHub Dark (`#0d1117`)** |
 
 ---
